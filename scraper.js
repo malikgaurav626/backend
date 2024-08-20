@@ -5,9 +5,13 @@ import * as cheerio from "cheerio";
 export async function fetchProfile(url) {
   try {
     const { data } = await axios.get(url);
+    if (typeof data !== "string") {
+      throw new Error("Expected a string as HTML response");
+    }
     return data;
   } catch (error) {
-    console.error("Error fetching profile:", error);
+    console.error("Error fetching profile:", error.message);
+    return null;
   }
 }
 
