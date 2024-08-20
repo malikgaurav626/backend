@@ -1,19 +1,32 @@
-// scraper.js
 import axios from "axios";
 import * as cheerio from "cheerio";
 
+const userAgents = [
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36",
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36",
+  "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:89.0) Gecko/20100101 Firefox/89.0",
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.1 Safari/605.1.15",
+];
+
+function getRandomUserAgent() {
+  return userAgents[Math.floor(Math.random() * userAgents.length)];
+}
+
 export async function fetchProfile(url) {
   try {
-    const { data } = await axios.get(url, {
+    const response = await axios.get(url, {
       headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        "User-Agent": getRandomUserAgent(),
       },
+      timeout: 10000, // 10 seconds timeout
     });
-    if (typeof data !== "string") {
+
+    if (typeof response.data !== "string") {
       throw new Error("Expected a string as HTML response");
     }
-    return data;
+
+    return response.data;
   } catch (error) {
     console.error("Error fetching profile:", error.message);
     return null;
